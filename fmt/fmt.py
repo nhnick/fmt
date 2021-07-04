@@ -26,7 +26,7 @@ class Fmt(object):
             raise ValueError('namespace "{}" already registered'.format(name))
         self._g_ns[name] = value
 
-    def mregister(self, ns: dict, update: bool = False) -> None:
+    def mregister(self, ns: Mutable[Any,Any], update: bool = False) -> None:
         for k, v in ns.items():
             self.register(k, v, update)
 
