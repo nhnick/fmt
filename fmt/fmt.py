@@ -7,7 +7,7 @@ import ast
 import sys
 from copy import deepcopy
 from functools import partial
-
+from typing import Any
 
 PY3 = sys.version_info[0] == 3
 if PY3:
@@ -17,21 +17,20 @@ else:
 
 
 class Fmt(object):
-
-    def __init__(self):
+    def __init__(self) -> None:
         self._g_ns = {}
         self._nodes_cache = {}
 
-    def register(self, name, value, update=False):
+    def register(self, name: str, value: Any, update: bool = False) -> None:
         if not update and name in self._g_ns:
             raise ValueError('namespace "{}" already registered'.format(name))
         self._g_ns[name] = value
 
-    def mregister(self, ns, update=False):
+    def mregister(self, ns: dict, update: bool = False) -> None:
         for k, v in ns.items():
             self.register(k, v, update)
 
-    def __call__(self, f_str, *_args):
+    def __call__(self, f_str: str, *_args: Any) -> str:
         if not isinstance(f_str, fmt_types):
             raise ValueError('Unsupported type as format '
                              'string: {}({})'.format(type(f_str), f_str))
@@ -127,11 +126,9 @@ class Parser(object):
         (?P<rbrace>\})?
             (?P<rbraces>(?(rbrace)[\s\}]*))
         (?P<rtext>[^\{\}]*)
-        """, re.S | re.X | re.M
-    )
+        """, re.S | re.X | re.M)
     _PATTERN_COMP = re.compile(
-        r'[a-zA-Z0-9_:]+\s+for\s+[a-zA-Z0-9_,]+\s+in\s+.+',
-        re.S | re.X | re.M)
+        r'[a-zA-Z0-9_:]+\s+for\s+[a-zA-Z0-9_,]+\s+in\s+.+', re.S | re.X | re.M)
     _ast_parse = partial(ast.parse, filename='<f-strings>', mode='eval')
 
     def __init__(self, f_str):
@@ -256,8 +253,7 @@ class Parser(object):
                 if is_even and strict_even:
                     raise SyntaxError(
                         'Single "{}" encountered in format string'.format(
-                            symbol)
-                    )
+                            symbol))
                 else:
                     has_rest = True
                     break
@@ -266,13 +262,13 @@ class Parser(object):
                 pos += len(piece)
             else:
                 end = braces.find(piece, pos)
-                btexts.append(braces[pos: end])
+                btexts.append(braces[pos:end])
                 pos = end + len(piece)
             btexts.append(symbol * div)
 
         if has_rest:
             end = braces.find(piece, pos)
-            btexts.append(braces[pos: end])
+            btexts.append(braces[pos:end])
         else:
             if not strict_even:
                 btexts.pop()
@@ -329,12 +325,12 @@ class Parser(object):
                     raise SyntaxError('unexpected EOF at {}'.format(
                         node_str[i]))
                 i += 1
-                if len(node_str) > i+2 and node_str[i] == '(':
+                if len(node_str) > i + 2 and node_str[i] == '(':
                     i += 2
                     if node_str[i] != ':':
                         raise SyntaxError('unexpected EOF at {}'.format(
                             node_str[i]))
-                    left, fmt_spec = node_str[:i], node_str[i+1:]
+                    left, fmt_spec = node_str[:i], node_str[i + 1:]
                 else:
                     left, fmt_spec = node_str, None
             else:
