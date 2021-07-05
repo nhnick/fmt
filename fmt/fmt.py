@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from typing import MutableMapping
 from __future__ import absolute_import
+from typing import MutableMapping
 
 import re
 import ast
