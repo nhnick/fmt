@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from typing import MutableMapping
 from __future__ import absolute_import
 
 import re
@@ -26,7 +27,7 @@ class Fmt(object):
             raise ValueError('namespace "{}" already registered'.format(name))
         self._g_ns[name] = value
 
-    def mregister(self, ns: Mutable[Any,Any], update: bool = False) -> None:
+    def mregister(self, ns: MutableMapping[Any,Any], update: bool = False) -> None:
         for k, v in ns.items():
             self.register(k, v, update)
 
